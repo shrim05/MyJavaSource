@@ -12,8 +12,7 @@
 <pre>
 생성시점 : <%=new Date(session.getCreationTime()) %>
 세션아이디: <%= session.getId() %>
-세션의 라이프사이클
-
+세션의 라이프사이클 : 집에서 추가
 </pre>
 </body>
 </html>
