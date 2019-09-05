@@ -45,7 +45,7 @@ for(Entry<String,String> img : imgMap.entrySet()){
 <script type="text/javascript">
 	window.onload = function() {
 		var result = "<%=rst%>";
-		if(result!=null){
+		if(result!="null"){
 			alert(result);
 		}
 	}

@@ -10,6 +10,7 @@
 <body>
 <h2>HttpSession</h2>
 <pre>
+<<<<<<< HEAD
 세션:	- 시간 : 한 유저가 해당 어플리케이션을 의미있게 사용하고 있는 기간 (사용시작~종료 , WEB)
 	- 통로 : 한 세션내에서 두 피어사이에 설정된 유일한 통로(주로 데이터베이스에서 사용하는 의미)
 세션의 생명주기(lifecycle)
@@ -35,6 +36,11 @@
 	3) 특정 쿠키 삭제시 : " 위와 같음
 	4) 명시적 로그아웃(invalidate) : 서버사이드 코드이기때문에 즉시 세션id 삭제
 	세션 삭제 <%session.invalidate();%>
+=======
+생성시점 : <%=new Date(session.getCreationTime()) %>
+세션아이디: <%= session.getId() %>
+세션의 라이프사이클 : 집에서 추가
+>>>>>>> branch 'master' of https://github.com/shrim05/MyJavaSource.git
 </pre>
 </body>
 </html>
