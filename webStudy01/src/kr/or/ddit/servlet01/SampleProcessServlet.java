@@ -17,21 +17,22 @@ public class SampleProcessServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8");
-		String numParam = req.getParameter("numParam");
-		if(numParam!=null && numParam.matches("\\d+")) {
-			System.out.println(Integer.parseInt(numParam) * 300);
-		}
-		String textParam = req.getParameter("textParam");
-		String radioParm = req.getParameter("radioParam");
-		String[] checkParam = req.getParameterValues("checkParam");
-		String selectParam1 = req.getParameter("selectParam1");
-		String[] selectParam2 = req.getParameterValues("selectParam2");
-		
+//		String numParam = req.getParameter("numParam");
+//		if(numParam!=null && numParam.matches("\\d+")) {
+//			System.out.println(Integer.parseInt(numParam) * 300);
+//		}
+//		String textParam = req.getParameter("textParam");
+//		String radioParm = req.getParameter("radioParam");
+//		String[] checkParam = req.getParameterValues("checkParam");
+//		String selectParam1 = req.getParameter("selectParam1");
+//		String[] selectParam2 = req.getParameterValues("selectParam2");
+//		
 		
 		
 		Map<String, String[]> pMap = req.getParameterMap();
-		Set<String> nameSet = pMap.keySet();
-		Iterator<String> it = nameSet.iterator();
+		Iterator<String> it = pMap.keySet().iterator();
+//		Set<String> nameSet = pMap.keySet();
+//		Iterator<String> it = nameSet.iterator();
 		while (it.hasNext()) {
 			String pName = (String) it.next();
 			String[] values = pMap.get(pName);

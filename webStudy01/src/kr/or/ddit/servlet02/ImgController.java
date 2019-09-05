@@ -14,12 +14,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/ImgConnect")
 public class ImgController extends HttpServlet {
-	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String path = "/WEB-INF/views/imageForm.jsp";
 		RequestDispatcher rd = request.getRequestDispatcher(path);
 		rd.forward(request, response);
+//		response.sendRedirect(path);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

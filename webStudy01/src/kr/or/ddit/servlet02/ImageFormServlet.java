@@ -31,5 +31,6 @@ public class ImageFormServlet extends HttpServlet {
 		String viewName = "/WEB-INF/views/imageForm.jsp";
 		RequestDispatcher rd = request.getRequestDispatcher(viewName);
 		rd.forward(request, response);
+//		response.sendRedirect(viewName);
 	}
 }

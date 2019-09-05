@@ -65,6 +65,7 @@ public class GugudanServlet extends HttpServlet{
 			PrintWriter out = resp.getWriter();
 		){
 			out.println(html);
+			out.println(getServletContext().hashCode());
 		}
 	}
 

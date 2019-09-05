@@ -20,9 +20,14 @@
 			 http stateless 단점을 보완하기 위한 최소한의 상태 정보를 서버상에서 유지
 			 <a href="${pageContext.request.contextPath}/06/sessionDesc.jsp">/06/sessionDesc.jsp</a>
 	ServletContext application : 어플리케이션(컨텍스트)과 서버에 대한 정보를 캡슐화
+			 <a href="<%=request.getContextPath() %>/07/applicationDesc.jsp">/06/sessionDesc.jsp</a>
+	
 	ServletConfig config : 서블릿에 대한 메타데이터 객체(JSP에서는 별 쓸일이 없음)
 	Object page : this (현재 페이지 인스턴스 자체)
-	Throwable exception : 어플리케이션에서 발생할 수 있는 모든 비정상적인 상황에 대한 정보 => 에러 /예외 캡슐화 (에러처리 페이지(isErrorPage="true")에서 에러 객체 사용) 
+	Throwable exception : 어플리케이션에서 발생할 수 있는 모든 비정상적인 상황에 대한 정보 => 에러 /예외 캡슐화 (에러처리 페이지(isErrorPage="true")에서 에러 객체 사용)
+	
+	ServletContext --> <%=application.hashCode() %>
+	 
 </pre>
 </body>
 </html>
