@@ -11,51 +11,34 @@
 <title>Insert title here</title>
 
 </head>
-<%! String rst = null;%>
 
 <body>
 <!-- action="<%=request.getContentLength() %>/imagesFolderProcess" -->
 <form  method="post">
-<select name="fileName">
+<select name="filename" required >
+	<option value>이미지선택</option>
 <%
-String result = (String)request.getAttribute("result");
-if(result!=null){
-	rst = result;
-}
-
-Map<String,String> imgMap = (Map)request.getAttribute("images");
-// Entry<String,String> imgEntry = imgList.entrySet();
-for(Entry<String,String> img : imgMap.entrySet()){
-		String path = img.getKey();
-		String fileName = img.getValue();
-%>
-	<option value=<%=path %>><%=fileName %></option>
-<%
-}
- %>
-	<!-- 옵션들은 images 안의 파일들 -->
+	 String[] imageFiles = (String[])request.getAttribute("imageFiles");
+	 String[] targetFiles = (String[])request.getAttribute("targetFiles");
+	 for(String file : imageFiles){
+		%>
+		<option><%=file%></option>
+		<%
+	}%>
 </select>
 	<!-- 타겟의 위치는 07  -->
-	<input type="radio" value="COPY" name="command" />복사
-	<input type="radio" value="MOVE" name="command" />이동
-	<input type="radio" value="DELETE" name="command" />삭제
+	<input type="radio" value="COPY" name="command" required />복사
+	<input type="radio" value="MOVE" name="command" required />이동
+	<input type="radio" value="DELETE" name="command" required />삭제
 	<input type="submit" value="명령처리" />
 </form>
+<ul>
+	<%
+	 for(String file : targetFiles){
+		%>
+		<li><%=file%></li>
+		<%
+	}%>
+</ul>
 </body>
-<script type="text/javascript">
-	window.onload = function() {
-		var result = "<%=rst%>";
-		if(result!="null"){
-			if(result=="copy"){
-				alert('복사완료');
-				
-			}else if(result=='move'){
-				alert('이동완료');
-				
-			}else if(result=='delete')
-				alert('삭제완료');
-		}
-	}
-
-</script>
 </html>
