@@ -36,7 +36,6 @@ public class ImageServiceImpl implements IImageService {
 		String targetUri = "/07"+filePath;
 		String outPath = context.getRealPath(targetUri);
 		File targetFile = new File(outPath);
-		System.out.println("복사경로"+outPath);
 		try(
 			InputStream is = context.getResourceAsStream(filePath);
 			FileOutputStream fos = new FileOutputStream(targetFile);
@@ -44,7 +43,7 @@ public class ImageServiceImpl implements IImageService {
 			IOUtils.copy(is, fos);
 		}
 		request.setAttribute("result","copy");
-		ImageFolderServlet servlet = new ImageFolderServlet();
+		ImageFolderServlet servlet = ImageFolderServlet.getInstance();
 		servlet.doGet(request, response);
 	}
 
@@ -55,16 +54,17 @@ public class ImageServiceImpl implements IImageService {
 		String targetUri = "/07"+filePath;
 		String outPath = context.getRealPath(targetUri);
 		File targetFile = new File(outPath);
-		File deleteFile = new File(context.getRealPath(filePath));
+		
 		try(
 			InputStream is = context.getResourceAsStream(filePath);
 			FileOutputStream fos = new FileOutputStream(targetFile);
 		){
 			IOUtils.copy(is, fos);
-			deleteFile.delete();
 		}
+		File deleteFile = new File(context.getRealPath(filePath));
+		deleteFile.delete();
 		request.setAttribute("result","move");
-		ImageFolderServlet servlet = new ImageFolderServlet();
+		ImageFolderServlet servlet = ImageFolderServlet.getInstance();
 		servlet.doGet(request, response);
 	}
 
@@ -75,7 +75,7 @@ public class ImageServiceImpl implements IImageService {
 		File deleteFile = new File(context.getRealPath(filePath));
 		deleteFile.delete();
 		request.setAttribute("result","delete");
-		ImageFolderServlet servlet = new ImageFolderServlet();
+		ImageFolderServlet servlet = ImageFolderServlet.getInstance();
 		servlet.doGet(request, response);
 		
 	}

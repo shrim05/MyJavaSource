@@ -18,6 +18,13 @@ import org.apache.commons.lang3.StringUtils;
 
 @WebServlet("/ImageFolderServlet")
 public class ImageFolderServlet extends HttpServlet {
+	private static ImageFolderServlet imgservlet = null;
+	public static ImageFolderServlet getInstance() {
+		if(imgservlet==null) {
+			imgservlet = new ImageFolderServlet();
+		}
+		return imgservlet;
+	}
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

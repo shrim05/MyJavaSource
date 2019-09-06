@@ -46,7 +46,14 @@ for(Entry<String,String> img : imgMap.entrySet()){
 	window.onload = function() {
 		var result = "<%=rst%>";
 		if(result!="null"){
-			alert(result);
+			if(result=="copy"){
+				alert('복사완료');
+				
+			}else if(result=='move'){
+				alert('이동완료');
+				
+			}else if(result=='delete')
+				alert('삭제완료');
 		}
 	}
 
