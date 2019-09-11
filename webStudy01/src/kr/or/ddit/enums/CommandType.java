@@ -8,10 +8,16 @@ import org.apache.commons.io.FileUtils;
 public enum CommandType {
 	COPY((src, targetFolder)->{
 		File target = new File(targetFolder, src.getName());
+		if(src.equals(target)) {
+			return;
+		}
 		FileUtils.copyFile(src, target);
 	}), 
 	MOVE((src, targetFolder)->{
 		File target = new File(targetFolder, src.getName());
+		if(target.exists()) {
+			return;
+		}
 		FileUtils.moveFile(src, target);
 	}), 
 	DELETE((src, targetFolder)->{
@@ -29,6 +35,7 @@ public enum CommandType {
 	
 	public void commandProcess(File src, File targetFolder) throws IOException{
 		processor.process(src, targetFolder);
+		
 	}
 	
 }
