@@ -3,9 +3,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +33,7 @@ public class ImageServlet extends HttpServlet{
 		//Multipurpose Internet Mail Extension 
 		resp.setContentType("image/jpeg");
 		String imageName = req.getParameter("image");
+		
 		int status = 200;
 		if(imageName==null || imageName.trim().length()==0) {
 			status = HttpServletResponse.SC_BAD_REQUEST;
@@ -41,6 +44,11 @@ public class ImageServlet extends HttpServlet{
 			status = HttpServletResponse.SC_NOT_FOUND;
 		}
 		if(status==200) {
+			String value = URLEncoder.encode(imageName,"UTF-8");
+			Cookie cookie = new Cookie("imgCookie",value);
+			cookie.setMaxAge(60*60*24*2);
+			cookie.setPath("/");
+			resp.addCookie(cookie);
 			byte[] buffer = new byte[1024];
 			try(
 			FileInputStream fis = new FileInputStream(imgFile);

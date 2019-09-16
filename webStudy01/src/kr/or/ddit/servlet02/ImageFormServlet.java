@@ -1,10 +1,12 @@
 package kr.or.ddit.servlet02;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +24,17 @@ public class ImageFormServlet extends HttpServlet {
 //		//3. (model 구성 책임 분리 후 ) service객체와의 의존관계 형성 -> 로직 선택
 		ImageListService service = new ImageListService();
 		String[] images = service.getImageList();
+		Cookie[] cookies = request.getCookies();
+		String cookieList;
+		if(cookies!=null){
+			for(Cookie temp : cookies){
+				if("imgCookie".equals(temp.getName())) {
+					cookieList = URLDecoder.decode(temp.getValue(),"UTF-8");
+					request.setAttribute("cookieList", cookieList);
+				}
+			}
+		}
+		
 //			1) raw data 확보
 //			2) data 가공해서 information 으로 생성(logic)
 //		4.Scope를 통해 information 공유
