@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,6 +16,7 @@ import kr.or.ddit.member.exception.NotAuthenticatedException;
 import kr.or.ddit.member.exception.UserNotFoundException;
 import kr.or.ddit.member.service.AuthenticateServiceImpl;
 import kr.or.ddit.member.service.IAuthenticateService;
+import kr.or.ddit.utils.CookieUtil;
 import kr.or.ddit.vo.MemberVO;
 
 @WebServlet("/login")
@@ -23,6 +24,8 @@ public class LoginControllerServlet extends HttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String savedId = new CookieUtil(request).getCookieValue("idCookie");
+		request.setAttribute("savedId", savedId);
 		String viewName = "/WEB-INF/views/login/loginForm.jsp";
 		request.getRequestDispatcher(viewName).forward(request, response);
 	}
@@ -39,6 +42,15 @@ public class LoginControllerServlet extends HttpServlet {
 		try {
 			IAuthenticateService service = new AuthenticateServiceImpl();
 			MemberVO savedMember = service.authenticate(new MemberVO(mem_id,mem_pass));
+			String checkbox = request.getParameter("idSave");
+			Cookie idCookie = CookieUtil.createCookie("idCookie", mem_id);
+			int maxAge = 0;
+			if("idSave".equals(checkbox)) {
+				maxAge = 60 * 60 * 24 * 2;
+			}
+			idCookie.setMaxAge(maxAge);
+			response.addCookie(idCookie);
+			
 			session.setAttribute("authMember", savedMember);
 			//이동 방식 => 해당 리퀘스트 객체 활용 끝났으니 redirect
 			response.sendRedirect(request.getContextPath()+"/");

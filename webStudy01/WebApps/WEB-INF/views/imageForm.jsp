@@ -1,3 +1,4 @@
+<%@page import="java.util.Objects"%>
 <%@page import="java.net.URLDecoder"%>
 <%@page import="java.net.URLEncoder"%>
 <%@page import="java.util.Map"%>
@@ -21,8 +22,7 @@
 <body>
 <%
  	String[] images = (String[])request.getAttribute("images");
-	Cookie imgCookie = (Cookie)request.getAttribute("imgCookie");
-	String cookieList = (String)request.getAttribute("cookieList");
+	String imageName = (String)request.getAttribute("imageName");
 %>
 <form id="form1" action="<%=request.getContextPath() %>/image.do" method="post">
 	<select name="image">
@@ -39,13 +39,9 @@
 	</select>
 </form>
 <div id = "imageArea">
+	
 </div>
 <script type="text/javascript">
-	$(function(){
-		var imageName = "<%=cookieList%>";
-		
-		imageArea.append(pattern.replace("%V",imageName));
-	})
 	var imageArea = $('#imageArea');
 	var pattern = '<img src="<%=request.getContextPath() %>/image.do?image=%V" />';
 	$("[name='image']").on("change",function(){
@@ -56,6 +52,9 @@
 	imageArea.on('click', "img",function(){
 		$(this).remove();
 	});
+	$("[name='image']").val("<%=Objects.toString(imageName, "")%>");
+	$("[name='image']").trigger("change");
+	
 </script>
 
 </body>

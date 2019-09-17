@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>welcome yo</title>
 </head>
 <body>
 <form name="logoutForm" action="${pageContext.request.contextPath}/logout" method="post">
@@ -19,7 +19,7 @@
 <%
 	}else{
 	%>
-		<%=authMember.getMem_name()%> 님 <a href="#" onclick="document.logoutForm.submit();">로그아웃</a> 
+		<a href="<%=request.getContextPath()%>/mypage"><%=authMember.getMem_name()%> 님 </a><a href="#" onclick="document.logoutForm.submit();">로그아웃</a> 
 <%	
 	}
 %>
