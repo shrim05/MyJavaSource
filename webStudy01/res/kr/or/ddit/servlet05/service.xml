@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<entry key="standard">/02/standard.jsp</entry>
+	<entry key="gugudan">/01/gugudanForm.jsp</entry>
+	<entry key="gugudanProcess">/02/gugudan.jsp</entry>
+	<entry key="calendar">/04/calendar.jsp</entry>
+	<entry key="time">/08/ajaxDesc.jsp</entry>
+	<entry key="image">/imageForm.do</entry>
+	<entry key="explorer">/serverFileManager</entry>
+</properties>

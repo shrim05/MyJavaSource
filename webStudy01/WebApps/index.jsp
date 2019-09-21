@@ -19,7 +19,9 @@
 <%
 	}else{
 	%>
-		<a href="<%=request.getContextPath()%>/mypage"><%=authMember.getMem_name()%> 님 </a><a href="#" onclick="document.logoutForm.submit();">로그아웃</a> 
+		<div><%=authMember.getMem_name()%> 님</div>
+		<a href="#" onclick="document.logoutForm.submit();">로그아웃</a><br>
+		<a href="<%=request.getContextPath()%>/mypage">마이페이지 가기 </a> 
 <%	
 	}
 %>

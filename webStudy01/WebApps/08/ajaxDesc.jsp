@@ -21,7 +21,7 @@
 		client.innerHTML = now;
 	    $.ajax({
 	//         type: "get",
-	        url: "getServerTime.jsp",
+	        url: "<%=request.getContextPath()%>/08/getServerTime.jsp",
 	//         data: "param=value&param2=value2",
 	        dataType: "json", //Accept 요청 헤더 결정 ex) Accept:text/plain == Content-Type (따라서 응답 헤더에도 동일한 방식으로 설정해줘야함) 
 	        success: function (response) {

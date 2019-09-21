@@ -20,7 +20,6 @@
 <%
 	}
 	String savedId = (String)request.getAttribute("savedId");
-	System.out.print(savedId);
 %>
 <body>
 <form method="post">

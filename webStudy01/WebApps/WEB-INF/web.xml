@@ -2,6 +2,10 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" version="3.1">
   <display-name>webStudy01</display-name>
   <context-param>
+    <param-name>service</param-name>
+    <param-value>/kr/or/ddit/servlet05/service.xml</param-value>
+  </context-param>
+  <context-param>
     <param-name>fileAddr</param-name>
     <param-value>d:/contents</param-value>
   </context-param>

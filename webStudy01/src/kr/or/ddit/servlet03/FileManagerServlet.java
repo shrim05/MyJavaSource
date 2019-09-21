@@ -3,11 +3,14 @@ package kr.or.ddit.servlet03;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -16,12 +19,14 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.Response;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.sun.javafx.binding.StringFormatter;
 
 import kr.or.ddit.enums.CommandType;
+import kr.or.ddit.utils.MarshallingUtils;
 
 @WebServlet("/serverFileManager")
 public class FileManagerServlet extends HttpServlet{
@@ -47,9 +52,14 @@ public class FileManagerServlet extends HttpServlet{
 		File folderRight = new File(realPathRight);
 		int status = 200;
 		String message = null;
+		Map<String, FileWrapper[]> jsonMap = new HashMap<>();
 		try {
 			List<FileWrapper> leftFiles = traversing(folderLeft);
 			List<FileWrapper> rightFiles = traversing(folderRight);
+			FileWrapper[] leftArray = new FileWrapper[leftFiles.size()];
+			FileWrapper[] rightArray = new FileWrapper[rightFiles.size()];
+			jsonMap.put("leftFiles",leftFiles.toArray(leftArray));
+			jsonMap.put("rightFiles",rightFiles.toArray(rightArray));
 			req.setAttribute("leftFiles", leftFiles);
 			req.setAttribute("rightFiles", rightFiles);
 		}catch(FileNotFoundException | IllegalArgumentException  e) { //멀티캐치 구문
@@ -63,11 +73,17 @@ public class FileManagerServlet extends HttpServlet{
 		if(status==200) {
 			String accept = req.getHeader("Accept");
 			if(accept.contains("json")) {
-				//json.jsp //마샬링 잘해보자
-				
+				resp.setContentType("application/json");
+				String json = new MarshallingUtils().marshalling(jsonMap);
+				try(
+					PrintWriter out = resp.getWriter();
+				){
+					out.print(json);
+				}
 			}else {
+				req.setCharacterEncoding("UTF-8");
 				String viewName = "/WEB-INF/views/serverFileManager.jsp";
-				req.getRequestDispatcher(viewName).forward(req,resp);
+				req.getRequestDispatcher(viewName).include(req,resp);
 			}
 		}else {
 			resp.sendError(status, message);
@@ -125,8 +141,9 @@ public class FileManagerServlet extends HttpServlet{
 			if(status==200) {
 //				doGet(req,resp);
 //				String viewName = req.getContextPath()+"/serverFileManager?leftSrc="+leftSrc+"&rightTarget="+rightTarget;
-				String viewName = String.format( req.getContextPath()+"/serverFileManager?leftSrc=%s&rightTarget=%s", leftSrc,rightTarget);
-				resp.sendRedirect(viewName);
+//				String viewName = String.format( req.getContextPath()+"/serverFileManager?leftSrc=%s&rightTarget=%s", leftSrc,rightTarget);
+//				req.getRequestDispatcher(viewName).include(req,resp);
+				doGet(req, resp);
 			}else {
 				resp.sendError(status);
 			}
