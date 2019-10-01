@@ -14,18 +14,19 @@ import java.util.List;
 
 import kr.or.ddit.db.ConnectionFactory;
 import kr.or.ddit.vo.MemberVO;
+import kr.or.ddit.vo.PagingInfoVO;
 
-public class MemberDAOImpl implements IMemberDAO{
+public class MemberDAOImpl_JDBC implements IMemberDAO{
 	
-	private static MemberDAOImpl instance;
+	private static MemberDAOImpl_JDBC instance;
 	
-	private MemberDAOImpl() {
+	private MemberDAOImpl_JDBC() {
 		
 	}
 	//상태의 차이가 없을 때만 싱글턴 패턴 사용
-	public static MemberDAOImpl getInstance() {
+	public static MemberDAOImpl_JDBC getInstance() {
 		if(instance==null) {
-			instance = new MemberDAOImpl();
+			instance = new MemberDAOImpl_JDBC();
 		}
 		return instance;
 	}
@@ -129,7 +130,7 @@ public class MemberDAOImpl implements IMemberDAO{
 		sql.append("       ?,?,?,?,                               ");
 		sql.append("       ?,?,?,?,                               ");
 		sql.append("       ?,?,?,?,                               ");
-		sql.append("       ?,2000                                 ");
+		sql.append("       ?,?                                 ");
 		sql.append(")                                              ");
 		
 		try (Connection conn = ConnectionFactory.getConnection();
@@ -166,7 +167,7 @@ public class MemberDAOImpl implements IMemberDAO{
 
 
 	@Override
-	public List<MemberVO> selectMemberList() {
+	public List<MemberVO> selectMemberList(PagingInfoVO pagingVO) {
 		ResultSet rs =null;
 		List<MemberVO> lmv = new ArrayList<MemberVO>();
 		StringBuffer sql = new StringBuffer();
@@ -297,6 +298,11 @@ public class MemberDAOImpl implements IMemberDAO{
 			} catch (SQLException e) {
 				throw new RuntimeException(e);
 			}
+	}
+	@Override
+	public int selectMemberCount(PagingInfoVO<MemberVO> pagingVO) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

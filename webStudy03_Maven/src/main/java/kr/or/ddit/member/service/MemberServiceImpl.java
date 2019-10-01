@@ -4,16 +4,17 @@ import java.util.List;
 
 import kr.or.ddit.enums.ServiceResult;
 import kr.or.ddit.member.dao.IMemberDAO;
-import kr.or.ddit.member.dao.MemberDAOImpl;
+import kr.or.ddit.member.dao.MemberDaoImpl;
 import kr.or.ddit.member.exception.NotAuthenticatedException;
 import kr.or.ddit.member.exception.UserNotFoundException;
 import kr.or.ddit.vo.MemberVO;
+import kr.or.ddit.vo.PagingInfoVO;
 
 public class MemberServiceImpl implements IMemberService{
 	
 	private static MemberServiceImpl instance;
 	//결합력 최상 -> HCLC 지향 -> FactoryObject pattern ,  Strategy pattern (DI)
-	private IMemberDAO dao = MemberDAOImpl.getInstance();
+	private IMemberDAO dao = new MemberDaoImpl();
 	private IAuthenticateService service = new AuthenticateServiceImpl();
 	private MemberServiceImpl() {}
 	
@@ -47,10 +48,17 @@ public class MemberServiceImpl implements IMemberService{
       
       return saved;
    }
+   
 
 	@Override
-	public List<MemberVO> retrieveMemberList() {
-		return dao.selectMemberList();
+	public int retrieveMemberCount(PagingInfoVO<MemberVO> pagingVO) {
+		return dao.selectMemberCount(pagingVO);
+		
+	}
+   
+	@Override
+	public List<MemberVO> retrieveMemberList(PagingInfoVO pagingVO) {
+		return dao.selectMemberList(pagingVO);
 	}
 
 	@Override
@@ -88,5 +96,6 @@ public class MemberServiceImpl implements IMemberService{
 		}
 		return sr;
 	}
+
 
 }

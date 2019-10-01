@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="kr.or.ddit.member.dao.IMemberDAO">
+	<insert id="insertMember" parameterType="MemberVO">
+<!-- 	<selectKey> -->
+<!-- 		// PK 생성 선행 쿼리 -->
+<!-- 	</selectKey> -->
+		insert into member (                         
+		      MEM_ID,MEM_PASS,MEM_NAME,MEM_REGNO1,   
+		       MEM_REGNO2,MEM_BIR,MEM_ZIP,MEM_ADD1,  
+		       MEM_ADD2,MEM_HOMETEL,MEM_COMTEL,MEM_HP,
+		       MEM_MAIL,MEM_JOB,MEM_LIKE,MEM_MEMORIAL,
+		      MEM_MEMORIALDAY,MEM_MILEAGE            
+		 )values(
+		    #{mem_id},#{mem_pass},#{mem_name},#{mem_regno1},   
+		       #{mem_regno2},#{mem_bir},#{mem_zip},#{mem_add1},  
+		       #{mem_add2},#{mem_hometel},#{mem_comtel},#{mem_hp},
+		       #{mem_mail},#{mem_job},#{mem_like},#{mem_memorial},
+		      #{mem_memorialday},2000
+		      )    
+	</insert>
+	<select id="selectMemberCount" parameterType="PagingInfoVO" resultType="int">
+		SELECT COUNT(MEM_ID) FROM MEMBER
+	</select>
+	
+	<select id="selectMemberList" parameterType="PagingInfoVO" resultType="MemberVO">
+	SELECT A.*
+	FROM(
+		SELECT ROWNUM RNUM, MEM_ID, MEM_NAME, MEM_ADD1, MEM_ADD2, MEM_HP,                
+		  		MEM_MAIL, MEM_MILEAGE     
+		  		FROM  MEMBER                             
+		  WHERE MEM_DELETE IS NULL
+	 	) A
+	 	WHERE RNUM BETWEEN #{startRow} AND #{endRow}                   
+	</select>
+	
+	
+	<resultMap type="MemberVO" id="memberMap" autoMapping="true">
+		<id column="MEM_ID" property="mem_id"/>
+		<collection property="prodList" javaType="java.util.List" ofType="ProdVO" autoMapping="true">
+			<id column="PROD_ID" property="prod_id" />
+			<association property="buyer" javaType="BuyerVO" autoMapping="true" >
+				<id column="BUYER_ID" property="buyer_id" />
+			</association>
+		</collection>
+	</resultMap>
+	<select id="selectMember" parameterType="MemberVO" resultMap="memberMap" >
+		SELECT                                                                               
+	    MEM_ID,     MEM_PASS,    MEM_NAME,    MEM_REGNO1,                                      
+	    MEM_REGNO2,    TO_CHAR(MEM_BIR,'YYYY-MM-DD') MEM_BIR,    MEM_ZIP,    MEM_ADD1,         
+	    MEM_ADD2,    MEM_HOMETEL,    MEM_COMTEL,    MEM_HP,                                    
+	    MEM_MAIL,    MEM_JOB,    MEM_LIKE,    MEM_MEMORIAL,                                    
+	    TO_CHAR(MEM_MEMORIALDAY,'YYYY-MM-DD') MEM_MEMORIALDAY,    to_char(MEM_MILEAGE) MEM_MILEAGE,    MEM_DELETE,
+        PROD_ID, PROD_NAME, PROD_COST, PROD_PRICE, 
+		(SELECT LPROD_NM FROM LPROD WHERE LPROD_GU = PROD_LGU) LPROD_NM, 
+		BUYER_ID, BUYER_NAME, BUYER_COMTEL
+      	FROM                                                                                   
+	    MEMBER LEFT OUTER JOIN CART ON (MEM_ID=CART_MEMBER)
+                LEFT OUTER JOIN PROD ON (CART_PROD=PROD_ID)
+                LEFT OUTER JOIN BUYER ON (PROD_BUYER=BUYER_ID)
+	    WHERE MEM_ID = #{mem_id}  AND MEM_DELETE IS NULL
+	    </select>
+	
+	<update id="updateMember" parameterType="MemberVO">
+		UPDATE member     
+	    SET               
+	    MEM_NAME        = #{mem_name}       ,
+	    MEM_BIR         = #{mem_bir}        ,
+	    MEM_ZIP         = #{mem_zip}        ,
+	    MEM_ADD1        = #{mem_add1}       ,
+	    MEM_ADD2        = #{mem_add2}       ,
+	    MEM_HOMETEL     = #{mem_hometel}    ,
+	    MEM_COMTEL      = #{mem_comtel}     ,
+	    MEM_HP          = #{mem_hp}         ,
+	    MEM_MAIL        = #{mem_mail}       ,
+	    MEM_JOB         = #{mem_job}        ,
+	    MEM_LIKE        = #{mem_like}       ,
+	    MEM_MEMORIAL    = #{mem_memorial}   ,
+	    MEM_MEMORIALDAY = #{mem_memorialday},
+	    MEM_MILEAGE     = #{mem_mileage}    
+	    WHERE		
+		MEM_ID =		#{mem_id}
+		AND MEM_PASS =		#{mem_pass}
+	</update>
+	
+	<delete id="deleteMember" parameterType="MemberVO">
+		UPDATE MEMBER SET MEM_DELETE = 'Y' WHERE MEM_ID=#{mem_id}
+	</delete>
+</mapper>
