@@ -34,7 +34,8 @@ public class OthersController {
 	
 	@URIMapping(value="/prod/getBuyerList.do")
 	public String getBuyerListForAjax(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		List<BuyerVO> buyerList = othersDAO.selectBuyerList(null);
+		String lgu = req.getParameter("prod_lgu");
+		List<BuyerVO> buyerList = othersDAO.selectBuyerList(lgu);
 		resp.setContentType("application/json ; charset=UTF-8");
 		String json = new MarshallingUtils().marshallingListToJson(buyerList);
 		try(

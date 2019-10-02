@@ -18,12 +18,23 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/generateLprodAndBuyer.js"></script>
 </head>
 <body>
-		<select name="prod_lgu">
+<form id="searchForm">
+<input type="hidden" name="page" />
+<input type="hidden" name="prod_lgu" value="${pagingVO.searchVO.prod_lgu }"/>
+<input type="hidden" name="prod_buyer" value="${pagingVO.searchVO.prod_buyer}"/>
+<input type="hidden" name="prod_name" value="${pagingVO.searchVO.prod_name}"/>
+
+</form>
+<div id="searchUI">
+		<select id="prod_lgu">
 			<option value>분류선택</option>
 		</select>
-		<select name="prod_buyer">
+		<select id="prod_buyer">
 			<option value>거래처선택</option>
 		</select>
+		<input type="text" id="prod_name" value="${pagingVO.searchVO.prod_name}" >
+		<input type="button" id="searchBtn" value="검색">
+</div>
 <c:url value="/prod/prodInsert.do" var="insertURL"/>
 <button type="button" onclick="location.href='${insertURL}';">신규상품 등록</button>
 
@@ -68,29 +79,41 @@
 		</tfoot>
 	</table>
 <script type="text/javascript">
-
+	var searchUI = $('#searchUI');
+	var prod_lguTag = $("#prod_lgu");
+	var prod_buyerTag = $("#prod_buyer");
+	var pageTag = $("[name='page']");
+	var searchBtn = $("#searchBtn")
+	var searchForm = $('#searchForm');
+	var prod_name = $('#prod_name');
 	$('#pagingArea').on("click","a",function(){
 		var page = $(this).data("page");
-		if(page>0){
-			location.href="?page="+page;
-		}
+		if(page<=0) return;
+		pageTag.val(page);
+		searchForm.submit();
 	});
-	var prod_lguTag = $("[name='prod_lgu']");
-	prod_lguTag.generateLprod("${pageContext.request.contextPath}");
-	var prod_buyerTag = $("[name='prod_buyer']");
-	prod_buyerTag.generateBuyer("${pageContext.request.contextPath}");
-	
+	$(prod_lguTag).generateLprod("${pageContext.request.contextPath}",
+			"${pagingVO.searchVO.prod_lgu}");
 	$(prod_lguTag).on("change", function(){
 		let lguCode = $(this).val();
 		if(!lguCode) return;
-		let options = $(prod_buyerTag).find("option:gt(0)");
-		$(options).hide();
-		let lguOptions = $(prod_buyerTag).find("option."+lguCode);
-		$(lguOptions).show();
+		$(prod_buyerTag).generateBuyer({
+					cPath : "${pageContext.request.contextPath}",
+					lgu : lguCode,
+					selectedBuyer : "${pagingVO.searchVO.prod_buyer}"
+				});
 	});
+	$(prod_lguTag).trigger("change");
 	
-	
-	
+	searchBtn.on("click", function(){
+		let child = searchUI.find(":input");
+		$(child).each(function(idx, ele){
+			let id = $(this).prop("id");
+			let value = $(this).val();
+			searchForm.find("[name='"+id+"']").val(value);
+			searchForm.submit();
+		});
+	});
 	
 </script>
 </body>

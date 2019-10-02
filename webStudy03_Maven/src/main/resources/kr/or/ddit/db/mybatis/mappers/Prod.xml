@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.or.ddit.prod.dao.IProdDAO">
-  	<select id="selectProdCount" resultType="int">
+<sql id="searchFrag">
+	<where>
+		<if test="searchVO!=null">
+			<if	test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchVO.prod_lgu)">
+				PROD_LGU = #{searchVO.prod_lgu}
+			</if>
+			<if	test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchVO.prod_buyer)">
+				AND PROD_BUYER = #{searchVO.prod_buyer}
+			</if>
+			<if	test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchVO.prod_name)">
+				AND INSTR(PROD_NAME, #{searchVO.prod_name}) > 0
+			</if>
+		</if>
+	</where>
+</sql>
+  	<select id="selectProdCount" parameterType="pagingInfoVO" resultType="int">
   		SELECT COUNT(PROD_ID) FROM PROD
+  		<include refid="searchFrag" />
   	</select>
   	
   	<select id="selectProdList" parameterType="PagingInfoVO" resultType="ProdVO">
@@ -14,6 +30,7 @@
   				PROD_MILEAGE, BUYER_NAME , LPROD_NM
   			FROM PROD INNER JOIN LPROD ON (PROD_LGU = LPROD_GU)
   				INNER JOIN BUYER ON (PROD_BUYER = BUYER_ID)
+  				<include refid="searchFrag" />
   				ORDER BY PROD_LGU DESC
 			) A
         ) B
@@ -55,9 +72,12 @@
   	<update id="updateProd" parameterType="ProdVO">
 		 UPDATE PROD SET
 			PROD_name=#{prod_name},PROD_properstock=#{prod_properstock},PROD_totalstock=#{prod_totalstock},
-			PROD_img=#{prod_img},PROD_outline=#{prod_outline},PROD_sale=#{prod_sale},PROD_price=#{prod_price},PROD_cost=#{prod_cost},PROD_buyer=#{prod_buyer},PROD_lgu=#{prod_lgu},
+			PROD_outline=#{prod_outline},PROD_sale=#{prod_sale},PROD_price=#{prod_price},PROD_cost=#{prod_cost},PROD_buyer=#{prod_buyer},PROD_lgu=#{prod_lgu},
 			PROD_unit=#{prod_unit},PROD_detail=#{prod_detail},PROD_delivery=#{prod_delivery},PROD_color=#{prod_color},PROD_mileage=#{prod_mileage},
 			PROD_qtysale=#{prod_qtysale},PROD_qtyin=#{prod_qtyin},PROD_size=#{prod_size}
+			<if	test="@org.apache.commons.lang3.StringUtils@isNotBlank(prod_img)">
+				, PROD_IMG=#{prod_img}
+			</if>
 			WHERE PROD_ID =#{prod_id}
   	</update>
   	

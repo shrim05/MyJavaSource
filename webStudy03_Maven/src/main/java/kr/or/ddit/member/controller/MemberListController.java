@@ -2,7 +2,9 @@ package kr.or.ddit.member.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,11 +29,18 @@ public class MemberListController{ //POJO (Plain Old Java Object) //특정 프�
 	@URIMapping(value="/member/memberList.do", method=HttpMethod.GET)
 	public String memberList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pageParam = request.getParameter("page");
+		String searchType = request.getParameter("searchType");
+		String searchWord = request.getParameter("searchWord");
+		Map<String, Object> searchMap = new HashMap<>();
+		searchMap.put("searchType", searchType);
+		searchMap.put("searchWord", searchWord);
+		
 		int currentPage =1;
 		if(StringUtils.isNumeric(pageParam)) {
 			currentPage = Integer.parseInt(pageParam);
 		}
 		PagingInfoVO<MemberVO> pagingVO = new PagingInfoVO<MemberVO>(5,3);
+		pagingVO.setSearchMap(searchMap);
 		int totalRecord =service.retrieveMemberCount(pagingVO);
 		String accept = request.getHeader("Accept");
 		pagingVO.setTotalRecord(totalRecord);
@@ -39,7 +48,6 @@ public class MemberListController{ //POJO (Plain Old Java Object) //특정 프�
 		service = MemberServiceImpl.getInstance();
 		List<MemberVO> lmv = service.retrieveMemberList(pagingVO);
 		pagingVO.setDataList(lmv);
-		
 		if(accept.contains("json")) {
 			response.setContentType("application/json;charset=UTF-8");
 			String json = new MarshallingUtils().marshalling(pagingVO);

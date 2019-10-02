@@ -1,14 +1,20 @@
 package kr.or.ddit.prod.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import kr.or.ddit.enums.ServiceResult;
@@ -34,7 +40,7 @@ public class ProdUpdateController {
 		return "prod/prodForm";
 	}
 	@URIMapping(value="/prod/prodUpdate.do", method=HttpMethod.POST)
-	public String update(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	public String update(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 		ProdVO pv = new ProdVO();
 		req.setAttribute("prod", pv);
 		Map queryString = req.getParameterMap();
@@ -44,6 +50,23 @@ public class ProdUpdateController {
 			BeanUtils.populate(pv, queryString);
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			throw new RuntimeException(e);
+		}
+		Part part = req.getPart("prod_image");
+		long size = part.getSize();
+		if(size>0) {
+			//1.저장위치
+			String saveFolderUrl = "/prodImages";
+			String saveFolderPath = req.getServletContext().getRealPath(saveFolderUrl);
+			File saveFolder = new File(saveFolderPath);
+			if(!saveFolder.exists()) saveFolder.mkdirs();
+//				2.저장명
+			String savename = UUID.randomUUID().toString();
+			try(
+					InputStream is = part.getInputStream();
+					){
+				FileUtils.copyInputStreamToFile(is, new File(saveFolder,savename));
+			}
+			pv.setProd_img(savename);
 		}
 		Map<String, String> errors = new HashMap<String, String>();
 		req.setAttribute("errors", errors);
@@ -101,10 +124,10 @@ public class ProdUpdateController {
 	         valid = false;
 	         errors.put("prod_outline", "OUTLINE 누락");
 	      }
-	      if (StringUtils.isBlank(prod.getProd_img())) {
-	         valid = false;
-	         errors.put("prod_img", "이미지경로? 누락");
-	      }
+//	      if (StringUtils.isBlank(prod.getProd_img())) {
+//	         valid = false;
+//	         errors.put("prod_img", "이미지경로? 누락");
+//	      }
 	      if (prod.getProd_totalstock()<=0) {
 	         valid = false;
 	         errors.put("prod_totalstock", "상품재고 누락");

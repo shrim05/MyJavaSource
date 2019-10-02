@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.or.ddit.member.dao.IMemberDAO">
+<sql id="searchFrag">
+	<where>
+		<if test="searchMap!=null">
+			<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchMap.searchWord)">
+			<choose>
+				<when test="'id'.equals(searchMap.searchType)">
+					INSTR(MEM_ID,#{searchMap.searchWord})>0
+				</when>
+				<when test="'name'.equals(searchMap.searchType)">
+					INSTR(MEM_NAME,#{searchMap.searchWord})>0
+				</when>
+				<when test="'address'.equals(searchMap.searchType)">
+					MEM_ADD1 LIKE '%'||#{searchMap.searchWord} ||'%'
+				</when>
+				<otherwise>
+					INSTR(MEM_ID,#{searchMap.searchWord})>0
+					OR INSTR(MEM_NAME,#{searchMap.searchWord})>0
+					OR MEM_ADD1 LIKE '%'||#{searchMap.searchWord} ||'%'
+				</otherwise>
+			</choose>
+			</if>
+		</if>
+	</where>
+</sql>
+	<select id="selectMemberCount" parameterType="PagingInfoVO" resultType="int">
+		SELECT COUNT(MEM_ID) FROM MEMBER
+		<include refid="searchFrag" />
+	</select>
+	
+	<select id="selectMemberList" parameterType="PagingInfoVO" resultType="MemberVO">
+	SELECT A.*
+	FROM(
+		SELECT ROWNUM RNUM, MEM_ID, MEM_NAME, MEM_ADD1, MEM_ADD2, MEM_HP,                
+		  		MEM_MAIL, MEM_MILEAGE     
+		  		FROM  MEMBER                             
+		  <include refid="searchFrag" />   
+	 	) A
+	 	WHERE RNUM BETWEEN #{startRow} AND #{endRow}   
+	</select>
 	<insert id="insertMember" parameterType="MemberVO">
 <!-- 	<selectKey> -->
 <!-- 		// PK 생성 선행 쿼리 -->
@@ -19,20 +58,6 @@
 		      #{mem_memorialday},2000
 		      )    
 	</insert>
-	<select id="selectMemberCount" parameterType="PagingInfoVO" resultType="int">
-		SELECT COUNT(MEM_ID) FROM MEMBER
-	</select>
-	
-	<select id="selectMemberList" parameterType="PagingInfoVO" resultType="MemberVO">
-	SELECT A.*
-	FROM(
-		SELECT ROWNUM RNUM, MEM_ID, MEM_NAME, MEM_ADD1, MEM_ADD2, MEM_HP,                
-		  		MEM_MAIL, MEM_MILEAGE     
-		  		FROM  MEMBER                             
-		  WHERE MEM_DELETE IS NULL
-	 	) A
-	 	WHERE RNUM BETWEEN #{startRow} AND #{endRow}                   
-	</select>
 	
 	
 	<resultMap type="MemberVO" id="memberMap" autoMapping="true">
