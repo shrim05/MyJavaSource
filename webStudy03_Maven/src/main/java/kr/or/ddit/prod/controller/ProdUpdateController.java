@@ -24,6 +24,8 @@ import kr.or.ddit.mvc.annotation.URIMapping;
 import kr.or.ddit.prod.service.IProdService;
 import kr.or.ddit.prod.service.ProdServiceImpl;
 import kr.or.ddit.vo.ProdVO;
+import kr.or.ddit.wrapper.MultipartRequestWapper;
+import kr.or.ddit.wrapper.PartWrapper;
 
 @CommandHandler
 public class ProdUpdateController {
@@ -51,22 +53,24 @@ public class ProdUpdateController {
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
-		Part part = req.getPart("prod_image");
-		long size = part.getSize();
-		if(size>0) {
-			//1.저장위치
-			String saveFolderUrl = "/prodImages";
-			String saveFolderPath = req.getServletContext().getRealPath(saveFolderUrl);
-			File saveFolder = new File(saveFolderPath);
-			if(!saveFolder.exists()) saveFolder.mkdirs();
-//				2.저장명
-			String savename = UUID.randomUUID().toString();
-			try(
-					InputStream is = part.getInputStream();
-					){
-				FileUtils.copyInputStreamToFile(is, new File(saveFolder,savename));
+		
+		if(req instanceof MultipartRequestWapper) {
+			PartWrapper partWrapper =  ((MultipartRequestWapper) req).getPartWrapper("prod_image");
+			if(partWrapper!=null) {
+				//1.저장위치
+				String saveFolderUrl = "/prodImages";
+				String saveFolderPath = req.getServletContext().getRealPath(saveFolderUrl);
+				File saveFolder = new File(saveFolderPath);
+				if(!saveFolder.exists()) saveFolder.mkdirs();
+//		2.저장명
+				String savename = UUID.randomUUID().toString();
+				try(
+						InputStream is = partWrapper.getInputStream();
+						){
+					FileUtils.copyInputStreamToFile(is, new File(saveFolder,savename));
+				}
+				pv.setProd_img(savename);
 			}
-			pv.setProd_img(savename);
 		}
 		Map<String, String> errors = new HashMap<String, String>();
 		req.setAttribute("errors", errors);

@@ -49,13 +49,13 @@
 		       MEM_REGNO2,MEM_BIR,MEM_ZIP,MEM_ADD1,  
 		       MEM_ADD2,MEM_HOMETEL,MEM_COMTEL,MEM_HP,
 		       MEM_MAIL,MEM_JOB,MEM_LIKE,MEM_MEMORIAL,
-		      MEM_MEMORIALDAY,MEM_MILEAGE            
+		      MEM_MEMORIALDAY,MEM_MILEAGE , MEM_IMG , MEM_ROLE  
 		 )values(
 		    #{mem_id},#{mem_pass},#{mem_name},#{mem_regno1},   
 		       #{mem_regno2},#{mem_bir},#{mem_zip},#{mem_add1},  
 		       #{mem_add2},#{mem_hometel},#{mem_comtel},#{mem_hp},
 		       #{mem_mail},#{mem_job},#{mem_like},#{mem_memorial},
-		      #{mem_memorialday},2000
+		      #{mem_memorialday},2000 , #{mem_img,jdbcType=BLOB} , 'USER'
 		      )    
 	</insert>
 	
@@ -75,8 +75,9 @@
 	    MEM_REGNO2,    TO_CHAR(MEM_BIR,'YYYY-MM-DD') MEM_BIR,    MEM_ZIP,    MEM_ADD1,         
 	    MEM_ADD2,    MEM_HOMETEL,    MEM_COMTEL,    MEM_HP,                                    
 	    MEM_MAIL,    MEM_JOB,    MEM_LIKE,    MEM_MEMORIAL,                                    
-	    TO_CHAR(MEM_MEMORIALDAY,'YYYY-MM-DD') MEM_MEMORIALDAY,    to_char(MEM_MILEAGE) MEM_MILEAGE,    MEM_DELETE,
-        PROD_ID, PROD_NAME, PROD_COST, PROD_PRICE, 
+	    TO_CHAR(MEM_MEMORIALDAY,'YYYY-MM-DD') MEM_MEMORIALDAY,    to_char(MEM_MILEAGE) MEM_MILEAGE,    MEM_DELETE,  MEM_IMG,
+	    MEM_ROLE
+        ,PROD_ID, PROD_NAME, PROD_COST, PROD_PRICE, 
 		(SELECT LPROD_NM FROM LPROD WHERE LPROD_GU = PROD_LGU) LPROD_NM, 
 		BUYER_ID, BUYER_NAME, BUYER_COMTEL
       	FROM                                                                                   
@@ -103,9 +104,11 @@
 	    MEM_MEMORIAL    = #{mem_memorial}   ,
 	    MEM_MEMORIALDAY = #{mem_memorialday},
 	    MEM_MILEAGE     = #{mem_mileage}    
+	    <if test="mem_img!=null">
+	    , MEM_IMG			= #{mem_img,jdbcType=BLOB}
+	    </if>
 	    WHERE		
 		MEM_ID =		#{mem_id}
-		AND MEM_PASS =		#{mem_pass}
 	</update>
 	
 	<delete id="deleteMember" parameterType="MemberVO">

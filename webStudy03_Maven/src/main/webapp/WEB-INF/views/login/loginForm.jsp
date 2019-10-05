@@ -30,6 +30,7 @@
 			<input type="submit" value="로그인" />
 	</ul>
 </form>
+<a href="<%=request.getContextPath()%>/member/memberInsert.do">회원가입 </a> 
 
 </body>
 </html>

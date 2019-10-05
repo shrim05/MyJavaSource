@@ -9,41 +9,81 @@
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
-<context-param>
+  <context-param>
     <param-name>fileAddr</param-name>
     <param-value>d:/contents</param-value>
   </context-param>
+  <filter>
+    <filter-name>AuthentificationFilter</filter-name>
+    <filter-class>kr.or.ddit.filter.AuthentificationFilter</filter-class>
+    <init-param>
+      <param-name>securedPath</param-name>
+      <param-value>/kr/or/ddit/securedService.xml</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>AuthentificationFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>AuthorizationFilter</filter-name>
+    <filter-class>kr.or.ddit.filter.AuthorizationFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>AuthorizationFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <filter-class>kr.or.ddit.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>MultipartRequestCheckFilter</filter-name>
+    <filter-class>kr.or.ddit.filter.MultipartRequestCheckFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>MultipartRequestCheckFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
   <servlet>
-  	<servlet-name>FrontController</servlet-name>
-  	<servlet-class>kr.or.ddit.mvc.FrontController</servlet-class>
-  	<init-param>
-  		<param-name>basePackages</param-name>
-  		<param-value>
+    <servlet-name>FrontController</servlet-name>
+    <servlet-class>kr.or.ddit.mvc.FrontController</servlet-class>
+    <init-param>
+      <param-name>basePackages</param-name>
+      <param-value>
   		kr.or.ddit.member.controller
   		kr.or.ddit.common.controller
   		kr.or.ddit.prod.controller
   		</param-value>
-  	</init-param>
-  	<init-param>
-  		<param-name>prefix</param-name>
-  		<param-value>/WEB-INF/views/</param-value>
-  	</init-param>
-  	<init-param>
-  		<param-name>suffix</param-name>
-  		<param-value>.jsp</param-value>
-  	</init-param>
-  	<load-on-startup>1</load-on-startup>
-  	<multipart-config></multipart-config>
+    </init-param>
+    <init-param>
+      <param-name>prefix</param-name>
+      <param-value>/WEB-INF/views/</param-value>
+    </init-param>
+    <init-param>
+      <param-name>suffix</param-name>
+      <param-value>.jsp</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+    <multipart-config/>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>FrontController</servlet-name>
-  	<url-pattern>/member/*</url-pattern>
-  	<url-pattern>/buyer/*</url-pattern>
-  	<url-pattern>/mypage/*</url-pattern>
-  	<url-pattern>/login</url-pattern>
-  	<url-pattern>/logout</url-pattern>
-  	<url-pattern>/prod/*</url-pattern>
-  	<url-pattern>*.do</url-pattern>
+    <servlet-name>FrontController</servlet-name>
+    <url-pattern>/member/*</url-pattern>
+    <url-pattern>/buyer/*</url-pattern>
+    <url-pattern>/mypage/*</url-pattern>
+    <url-pattern>/login</url-pattern>
+    <url-pattern>/logout</url-pattern>
+    <url-pattern>/prod/*</url-pattern>
+    <url-pattern>*.do</url-pattern>
   </servlet-mapping>
   <servlet>
     <servlet-name>DescriptionServlet</servlet-name>

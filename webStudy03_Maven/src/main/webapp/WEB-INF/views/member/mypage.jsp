@@ -19,6 +19,10 @@
    .error{
       color:red;
    }
+   img{
+   width:100px;
+   height:100px;
+   }
 </style>
 </head>
 <body>
@@ -30,7 +34,8 @@
       </c:if>
       <c:remove var="message" scope="session" />
    <form action="${pageContext.request.contextPath}/member/memberUpdate.do"
-      method="post">
+      method="post"
+      enctype="multipart/form-data" >
       <table class="table table-bordered">
          <tr>
             <th>회원아이디</th>
@@ -48,6 +53,17 @@
             <th>이름</th>
             <td><input type="text" required class="form-control"
                name="mem_name" value="${savedMember.mem_name}" /></td>
+         </tr>
+         <tr>
+            <th>이미지</th>
+            <td>
+            <c:if test="${not empty savedMember.mem_img }">
+            	<div>
+            		<img src="data:images/*;base64,${savedMember.mem_imageBase64 }" />
+            	</div>
+           	</c:if>
+            	<input type="file" name="mem_image" />
+            </td>
          </tr>
          <tr>
             <th>주민번호1</th>

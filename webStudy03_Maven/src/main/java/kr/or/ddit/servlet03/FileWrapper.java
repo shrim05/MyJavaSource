@@ -46,7 +46,7 @@ public class FileWrapper {
 		return directory;
 	}
 	public void setDirectory(boolean directory) {
-		this.directory = directory;
+ 		this.directory = directory;
 	}
 	public File getResource() {
 		return resource;

@@ -111,7 +111,13 @@
          </tr>
          <tr>
             <th>이미지</th>
-            <td><input type="file" name="prod_image" accept="image"><span class="error">${errors.prod_img}</span></td>
+            <td>
+              <c:if test="${not empty prod.prod_img }">
+            	<div>
+            		<img src="${pageContext.request.contextPath}/prodImages/"+${prod.prod_img } />
+            	</div>
+           	</c:if>
+            <input type="file" name="prod_image" accept="image"><span class="error">${errors.prod_img}</span></td>
          </tr>
          <tr>
             <th>상품재고</th>

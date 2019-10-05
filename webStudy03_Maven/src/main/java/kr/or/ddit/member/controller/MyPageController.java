@@ -23,24 +23,10 @@ public class MyPageController extends HttpServlet {
 	@URIMapping("/mypage")		
 	public String mypage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		String viewName=null;
-		if(session.isNew()) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-			return null;
-		}
 		MemberVO authMember = (MemberVO)session.getAttribute("authMember");
-		if(authMember==null) {
-			String message = "마이페이지는 로그인이 필요함";
-			session.setAttribute("message", message);
-			viewName = "redirect:/login"; 
-		}else {
-			MemberVO savedMember = service.retrieveMember(authMember);
-			request.setAttribute("savedMember", savedMember);
-			viewName = "member/mypage";
-		}
+		String viewName=null;
+		MemberVO savedMember = service.retrieveMember(authMember);
+		viewName = "member/mypage";
 		return viewName;
-		
 	}
-	
-
 }

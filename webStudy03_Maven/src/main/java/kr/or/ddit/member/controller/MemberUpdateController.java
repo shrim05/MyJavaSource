@@ -1,6 +1,8 @@
 package kr.or.ddit.member.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,8 +13,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import kr.or.ddit.enums.ServiceResult;
@@ -22,6 +26,8 @@ import kr.or.ddit.mvc.annotation.CommandHandler;
 import kr.or.ddit.mvc.annotation.HttpMethod;
 import kr.or.ddit.mvc.annotation.URIMapping;
 import kr.or.ddit.vo.MemberVO;
+import kr.or.ddit.wrapper.MultipartRequestWapper;
+import kr.or.ddit.wrapper.PartWrapper;
 
 @CommandHandler
 public class MemberUpdateController extends HttpServlet {
@@ -37,6 +43,13 @@ public class MemberUpdateController extends HttpServlet {
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
+		 if(req instanceof MultipartRequestWapper) {
+	    	  PartWrapper partWrapper =  ((MultipartRequestWapper) req).getPartWrapper("mem_image");
+	    	  if(partWrapper !=null) {
+	    		  mv.setMem_img(partWrapper.getBytes());
+	    	  }
+	      }
+	      
 		//2. 분석
 		Map<String, String> errors = new HashMap<String, String>();
 		boolean valid = validate(mv, errors);
