@@ -11,7 +11,6 @@ import java.util.UUID;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.FileUtils;
@@ -24,7 +23,7 @@ import kr.or.ddit.mvc.annotation.URIMapping;
 import kr.or.ddit.prod.service.IProdService;
 import kr.or.ddit.prod.service.ProdServiceImpl;
 import kr.or.ddit.vo.ProdVO;
-import kr.or.ddit.wrapper.MultipartRequestWapper;
+import kr.or.ddit.wrapper.MultipartRequestWrapper;
 import kr.or.ddit.wrapper.PartWrapper;
 
 @CommandHandler
@@ -54,8 +53,8 @@ public class ProdUpdateController {
 			throw new RuntimeException(e);
 		}
 		
-		if(req instanceof MultipartRequestWapper) {
-			PartWrapper partWrapper =  ((MultipartRequestWapper) req).getPartWrapper("prod_image");
+		if(req instanceof MultipartRequestWrapper) {
+			PartWrapper partWrapper =  ((MultipartRequestWrapper) req).getPartWrapper("prod_image");
 			if(partWrapper!=null) {
 				//1.저장위치
 				String saveFolderUrl = "/prodImages";

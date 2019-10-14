@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.board.dao.IAttatch2DAO">
+	<insert id="insertAttatches" parameterType="Board2VO">
+		<selectKey order="BEFORE" resultType="int" keyProperty="attNoStart">
+			SELECT NVL(MAX(ATT_NO), 0)+1 FROM ATTATCH2
+		</selectKey>
+		INSERT ALL
+		<foreach collection="attatchList" item="attach" index="idx">
+			INTO ATTATCH2 (
+			    ATT_NO,    BO_NO,    ATT_FILENAME,
+			    ATT_SAVENAME,    ATT_MIME,    ATT_FILESIZE,
+			    ATT_FANCYSIZE
+			) VALUES (
+				#{attNoStart}+#{idx},    #{bo_no},    #{attach.att_filename},
+			    #{attach.att_savename},    #{attach.att_mime},    #{attach.att_filesize},
+			    #{attach.att_fancysize}
+			)
+		</foreach>
+		SELECT * FROM DUAL
+	</insert>
+	
+	<delete id="deleteAttatches" parameterType="Board2VO">
+		DELETE FROM ATTATCH2
+		WHERE BO_NO = #{bo_no}
+			  <if test="delAttatches!=null and delAttatches.length gt 0">	
+				  AND ATT_NO IN 
+				  <foreach collection="delAttatches" 
+				  		item="delNo" open="(" close=")" separator=",">
+				  	#{delNo}
+				  </foreach>	
+			  </if>
+	</delete>
+	
+	<update id="updateDowncount" parameterType="int"> 
+		UPDATE ATTATCH2
+		SET
+		ATT_DOWNCOUNT = ATT_DOWNCOUNT + 1
+		WHERE ATT_NO = #{att_no}
+	</update>
+	
+	<select id="selectAttatch" parameterType="int" resultType="Attatch2VO">
+		SELECT ATT_NO,    BO_NO,    ATT_FILENAME,
+			    ATT_SAVENAME,    ATT_MIME,    ATT_FILESIZE,
+			    ATT_FANCYSIZE,    ATT_DOWNCOUNT
+		FROM ATTATCH2
+		WHERE ATT_NO = #{att_no}
+	</select>
+	
+</mapper>
+
+

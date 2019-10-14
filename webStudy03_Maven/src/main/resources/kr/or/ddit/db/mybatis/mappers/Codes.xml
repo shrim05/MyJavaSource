@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.alba.dao.ICodeDAO">
+	<select id="selectLicense" resultType="hashmap">
+		SELECT LIC_CODE "lic_code", LIC_NAME "lic_name"
+		FROM LICENSE
+	</select>
+	<select id="selectGrades" resultType="hashmap">
+		SELECT GR_CODE "gr_code", GR_NAME "gr_name"
+		FROM GRADE
+	</select>
+</mapper>

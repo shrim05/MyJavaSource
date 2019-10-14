@@ -24,7 +24,7 @@ import kr.or.ddit.mvc.annotation.URIMapping;
 import kr.or.ddit.prod.service.IProdService;
 import kr.or.ddit.prod.service.ProdServiceImpl;
 import kr.or.ddit.vo.ProdVO;
-import kr.or.ddit.wrapper.MultipartRequestWapper;
+import kr.or.ddit.wrapper.MultipartRequestWrapper;
 import kr.or.ddit.wrapper.PartWrapper;
 
 @CommandHandler
@@ -45,8 +45,8 @@ public class ProdInsertController {
 			throw new RuntimeException();
 		}
 		
-		if(req instanceof MultipartRequestWapper) {
-			PartWrapper partWrapper =  ((MultipartRequestWapper) req).getPartWrapper("prod_image");
+		if(req instanceof MultipartRequestWrapper) {
+			PartWrapper partWrapper =  ((MultipartRequestWrapper) req).getPartWrapper("prod_image");
 			if(partWrapper!=null) {
 				//1.저장위치
 				String saveFolderUrl = "/prodImages";

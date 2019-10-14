@@ -12,11 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.Part;
 
-public class MultipartRequestWapper extends HttpServletRequestWrapper {
+public class MultipartRequestWrapper extends HttpServletRequestWrapper {
 
 	private Map<String, PartWrapper[]> filePartWrapperMap; 
 	
-	public MultipartRequestWapper(HttpServletRequest request) throws IOException, ServletException {
+	public MultipartRequestWrapper(HttpServletRequest request) throws IOException, ServletException {
 		super(request);
 		filePartWrapperMap = new HashMap<String, PartWrapper[]>();
 		parseRequest(request);

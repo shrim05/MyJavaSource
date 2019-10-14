@@ -26,6 +26,7 @@ public class MyPageController extends HttpServlet {
 		MemberVO authMember = (MemberVO)session.getAttribute("authMember");
 		String viewName=null;
 		MemberVO savedMember = service.retrieveMember(authMember);
+		request.setAttribute("savedMember", savedMember);
 		viewName = "member/mypage";
 		return viewName;
 	}

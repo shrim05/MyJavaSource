@@ -24,7 +24,7 @@ import kr.or.ddit.mvc.annotation.CommandHandler;
 import kr.or.ddit.mvc.annotation.HttpMethod;
 import kr.or.ddit.mvc.annotation.URIMapping;
 import kr.or.ddit.vo.MemberVO;
-import kr.or.ddit.wrapper.MultipartRequestWapper;
+import kr.or.ddit.wrapper.MultipartRequestWrapper;
 import kr.or.ddit.wrapper.PartWrapper;
 
 @CommandHandler
@@ -47,8 +47,8 @@ public class MemberInsertController extends HttpServlet{
          throw new RuntimeException(e);
       }
       
-      if(req instanceof MultipartRequestWapper) {
-    	  PartWrapper partWrapper =  ((MultipartRequestWapper) req).getPartWrapper("mem_image");
+      if(req instanceof MultipartRequestWrapper) {
+    	  PartWrapper partWrapper =  ((MultipartRequestWrapper) req).getPartWrapper("mem_image");
     	  if(partWrapper !=null) {
     		  member.setMem_img(partWrapper.getBytes());
     	  }

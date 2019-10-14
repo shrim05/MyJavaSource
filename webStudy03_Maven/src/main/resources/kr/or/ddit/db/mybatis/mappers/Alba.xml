@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.alba.dao.IAlbaDAO">
+		<sql id="albaColumns">
+		AL_ID,		    AL_NAME,		    AL_AGE,		    AL_ADDRESS,
+	    AL_HP,		    AL_SPEC,		    AL_DESC,		GR_CODE,
+	    AL_CAREER,		AL_GEN,		    	AL_BTYPE,		AL_MAIL
+	</sql>
+	<sql id="searchFrag">
+		<where>
+	     <if test="searchMap!=null and @org.apache.commons.lang3.StringUtils@isNotBlank(searchMap.searchWord)">
+	     	<choose>
+	     		<when test='"name".equals(searchMap.searchType)'>
+	     			AL_NAME LIKE '%'||#{searchMap.searchWord}||'%'
+	     		</when>
+	     		<when test='"address".equals(searchMap.searchType)'>
+	     			AL_ADDRESS LIKE '%'||#{searchMap.searchWord}||'%'
+	     		</when>
+	     		<when test='"hp".equals(searchMap.searchType)'>
+	     			AL_HP LIKE '%'||#{searchMap.searchWord}||'%'
+	     		</when>
+	     		<otherwise>
+	     			AL_NAME LIKE '%'||#{searchMap.searchWord}||'%' OR
+	     			AL_ADDRESS LIKE '%'||#{searchMap.searchWord}||'%' OR
+	     			AL_HP LIKE '%'||#{searchMap.searchWord}||'%'
+	     		</otherwise>
+	     	</choose>
+	     </if>
+     </where>
+	</sql>
+	<insert id="insertAlba" parameterType="AlbaVO">
+		<selectKey resultType="string" keyProperty="al_id" order="BEFORE">
+			SELECT 'A'||LPAD(NVL(TO_NUMBER(SUBSTR(MAX(AL_ID), 2)), 0)+1, 7, '0')
+			FROM ALBA
+		</selectKey>
+		INSERT INTO ALBA (
+			    <include refid="albaColumns" />
+		) VALUES (
+		 	#{al_id,jdbcType=VARCHAR},		    #{al_name,jdbcType=VARCHAR},		    #{al_age,jdbcType=NUMERIC},		    #{al_address,jdbcType=VARCHAR},
+		    #{al_hp,jdbcType=VARCHAR},		    #{al_spec,jdbcType=VARCHAR},		    #{al_desc,jdbcType=VARCHAR},		    #{gr_code,jdbcType=VARCHAR},
+		    #{al_career,jdbcType=VARCHAR},		    #{al_gen,jdbcType=CHAR},		    #{al_btype,jdbcType=VARCHAR},		    #{al_mail,jdbcType=VARCHAR}
+		)
+	</insert>
+	<resultMap type="AlbaVO" id="albaMap" autoMapping="true">
+		<id property="al_id" column="AL_ID"/>
+		<collection property="licenseList" ofType="LicAlbaVO" autoMapping="true" />
+	</resultMap>
+	<select id="selectAlba" parameterType="string" resultMap="albaMap">
+		SELECT
+			A.AL_ID,		    AL_NAME,		    AL_AGE,		    AL_ADDRESS,
+		    AL_HP,		    AL_SPEC,		    AL_DESC,		A.GR_CODE,
+		    AL_CAREER,		AL_GEN,		    	AL_BTYPE,		AL_MAIL
+		    , GR_NAME
+		    , C.LIC_CODE, LIC_NAME
+		FROM ALBA A INNER JOIN GRADE B ON (A.GR_CODE = B.GR_CODE)
+					LEFT OUTER JOIN LIC_ALBA C ON (A.AL_ID = C.AL_ID)
+					LEFT OUTER JOIN LICENSE D ON (C.LIC_CODE = D.LIC_CODE)
+		WHERE A.AL_ID = #{al_id}    
+	</select>
+	<select id="selectAlbaCount" resultType="int" parameterType="PagingInfoVO">
+		SELECT COUNT(AL_ID)
+		FROM ALBA
+		<include refid="searchFrag" />
+	</select>
+	<select id="selectAlbaList" resultType="AlbaVO" parameterType="PagingInfoVO">
+		WITH ORDEREDALBA AS(
+			SELECT
+				<include refid="albaColumns" />
+			FROM ALBA
+			<include refid="searchFrag" />
+			ORDER BY AL_ID DESC	
+		)
+		SELECT *
+		FROM (
+			SELECT ROWNUM RNUM, ORDEREDALBA.*
+			FROM ORDEREDALBA
+		)	
+		<![CDATA[
+			WHERE RNUM >= #{startRow} AND RNUM <= #{endRow}
+		]]> 
+	</select>
+	<update id="updateAlba" parameterType="AlbaVO">
+		UPDATE alba
+		SET
+		    AL_NAME	=	#{al_name,jdbcType=VARCHAR},
+		    AL_AGE	=	#{al_age,jdbcType=NUMERIC},
+		    AL_ADDRESS	=	#{al_address,jdbcType=VARCHAR},
+		    AL_HP	=	#{al_hp,jdbcType=VARCHAR},
+		    AL_SPEC	=	#{al_spec,jdbcType=VARCHAR},
+		    AL_DESC	=	#{al_desc,jdbcType=VARCHAR},
+		    GR_CODE = #{gr_code,jdbcType=VARCHAR},
+		    AL_CAREER	=	#{al_career,jdbcType=VARCHAR},
+		    AL_GEN	=	#{al_gen,jdbcType=CHAR},
+		    AL_BTYPE	=	#{al_btype,jdbcType=VARCHAR},
+		    AL_MAIL	=	#{al_mail,jdbcType=VARCHAR}
+		WHERE  AL_ID	=	#{al_id,jdbcType=VARCHAR}
+	</update>
+	
+	<insert id="insertLicenses" parameterType="AlbaVO">
+			INSERT ALL
+			<foreach collection="licenseList" item="licAlba">
+				INTO LIC_ALBA (AL_ID, LIC_CODE, LIC_IMAGE)	VALUES( #{al_id}, #{licAlba.lic_code}, #{licAlba.lic_image})
+			</foreach> 
+			SELECT * FROM DUAL
+	</insert>
+	
+	<delete id="deleteLicenses" parameterType="AlbaVO">
+			DELETE FROM LIC_ALBA
+			WHERE AL_ID = #{al_id}
+			<if test="deleteLic_codes!=null and deleteLic_codes.length gt 0">
+				AND LIC_CODE IN 
+				<foreach collection="deleteLic_codes" item="delCode"
+					open="(" close=")" separator=","
+				>
+					#{delCode}
+				</foreach>
+			</if>
+	</delete>	
+	
+	<delete id="deleteAlba" parameterType="string">
+		DELETE FROM ALBA 
+		WHERE AL_ID = #{al_id}
+	</delete>
+	
+	<select id="selectLicense" parameterType="LicAlbaVO" resultType="LicAlbaVO">
+		SELECT LIC_CODE, LIC_IMAGE
+		FROM LIC_ALBA
+		WHERE AL_ID = #{al_id} AND LIC_CODE = #{lic_code}
+	</select>
+</mapper>

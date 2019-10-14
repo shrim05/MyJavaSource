@@ -10,7 +10,7 @@
 		</Console>
 	</Appenders>
 	<Loggers>
-		<Logger name="kr.or.ddit" level="info" additivity="false">
+		<Logger name="kr.or.ddit" level="debug" additivity="false">
 			<AppenderRef ref="Console" />
 		</Logger>
 		<logger name="jdbc.sqltiming" level="debug" additivity="false">

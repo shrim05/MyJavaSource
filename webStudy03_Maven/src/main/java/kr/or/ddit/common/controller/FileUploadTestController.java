@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import kr.or.ddit.mvc.annotation.CommandHandler;
 import kr.or.ddit.mvc.annotation.HttpMethod;
 import kr.or.ddit.mvc.annotation.URIMapping;
-import kr.or.ddit.wrapper.MultipartRequestWapper;
+import kr.or.ddit.wrapper.MultipartRequestWrapper;
 import kr.or.ddit.wrapper.PartWrapper;
 
 @CommandHandler
@@ -29,8 +29,8 @@ public class FileUploadTestController {
 //		Part uploader req.getPart("uploader");
 		System.out.println(uploader);
 		
-		if(req instanceof MultipartRequestWapper) {
-			MultipartRequestWapper requestWapper = (MultipartRequestWapper) req;
+		if(req instanceof MultipartRequestWrapper) {
+			MultipartRequestWrapper requestWapper = (MultipartRequestWrapper) req;
 			PartWrapper[] array = requestWapper.getPartWrappers("uploadFile");
 			
 			//1.저장위치(/prodImages)

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.board.dao.IBoard2DAO">
+	<cache eviction="LRU" flushInterval="60000" size="512" />
+	<sql id="searchFrag">
+		<where>
+			<if test="searchMap!=null">
+  			<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(searchMap.searchWord)">
+  			<choose>
+  				<when test="'title'.equals(searchMap.searchType)">
+  					INSTR(BO_TITLE, #{searchMap.searchWord}) > 0
+  				</when>
+  				<when test="'writer'.equals(searchMap.searchType)">
+  					INSTR(BO_WRITER, #{searchMap.searchWord}) > 0
+  				</when>
+  				<when test="'content'.equals(searchMap.searchType)">
+  					BO_CONTENT LIKE '%'||#{searchMap.searchWord}||'%'
+  				</when>
+  				<otherwise>
+  					INSTR(BO_TITLE, #{searchMap.searchWord}) > 0
+  					OR INSTR(BO_WRITER, #{searchMap.searchWord}) > 0
+  					OR BO_CONTENT LIKE '%'||#{searchMap.searchWord}||'%'
+  				</otherwise>
+  			</choose>
+  			</if>
+  		</if>
+		</where>
+	</sql>
+	<select id="selectBoardCount" parameterType="PagingInfoVO" resultType="int">
+		SELECT COUNT(*)
+		FROM BOARD2
+		<include refid="searchFrag" />
+	</select>
+<!-- 	<resultMap type="Board2VO" id="boardListMap" autoMapping="true"> -->
+<!-- 		<collection property="replyList" select="selectReplyList" column="BO_NO" /> -->
+<!-- 		<select id="selectReplyList" resultType="Reply2VO"> -->
+<!-- 			select * from reply2 where bo_no=#{bo_no} -->
+<!-- 		</select> -->
+<!-- 	</resultMap> -->
+	<select id="selectBoardList" parameterType="PagingInfoVO" resultType="Board2VO">
+		SELECT B.*
+		FROM(
+		    SELECT ROWNUM RNUM, A.*
+		    FROM(
+		    	<![CDATA[
+		        SELECT LEVEL,
+		            BO_NO,    BOARD_TYPE,    
+		            LPAD('   re:', 12*(level-1), '&nbsp;&nbsp;') || BO_TITLE AS BO_TITLE,
+		            BO_WRITER,   BO_HIT,	 BO_LIKE,
+		            TO_CHAR(BO_DATE, 'YYYY-MM-DD HH:MI') BO_DATE       
+		        FROM   BOARD2
+		        ]]>
+		        <include refid="searchFrag" />
+		        START WITH BO_PARENT IS NULL
+		        CONNECT BY PRIOR BO_NO = BO_PARENT
+		        ORDER SIBLINGS BY BO_NO DESC
+		    ) A
+		) B
+		WHERE RNUM BETWEEN #{startRow} AND #{endRow}
+	</select>
+	<resultMap type="Board2VO" id="boardMap" autoMapping="true">
+		<id property="bo_no" column="boNO"/>
+		<collection property="attatchList" 
+					ofType="Attatch2VO" autoMapping="true">
+			<id property="att_no" column="ATT_NO"/>
+		</collection>
+	</resultMap>
+	<select id="selectBoard" parameterType="Board2VO" 
+			resultMap="boardMap">
+		SELECT
+			A.BO_NO "boNO",    BOARD_TYPE,    BO_TITLE,
+		    BO_WRITER,   TO_CHAR(BO_DATE, 'YYYY-MM-DD HH:MI') BO_DATE,    
+		    BO_CONTENT,  BO_PASS,    BO_IP,    
+		    BO_PARENT, BO_HIT, BO_LIKE
+		    , (SELECT BOARD_NAME FROM BOARDTYPE2 C 
+		    	WHERE C.BOARD_TYPE = A.BOARD_TYPE)  BOARD_NAME		       
+		    , 	ATT_NO, ATT_FILENAME,
+				ATT_MIME, ATT_FANCYSIZE,
+				ATT_DOWNCOUNT, ATT_SAVENAME
+		FROM BOARD2 A  LEFT OUTER JOIN ATTATCH2 B ON (A.BO_NO = B.BO_NO)
+		WHERE A.BO_NO = #{bo_no}  
+	</select>
+	<update id="updateBoardHit" parameterType="Board2VO" flushCache="false" >
+		UPDATE BOARD2
+		SET BO_HIT = BO_HIT + 1
+		WHERE BO_NO = #{bo_no}
+	</update>
+	<insert id="insertBoard" parameterType="Board2VO">
+		<selectKey order="BEFORE" keyProperty="bo_no" resultType="int">
+			SELECT NVL(MAX(BO_NO), 0)+1 FROM BOARD2
+		</selectKey>
+		INSERT INTO BOARD2 (
+		    BO_NO,    BOARD_TYPE,    BO_TITLE,
+		    BO_WRITER,    BO_DATE,    BO_CONTENT,
+		    BO_PASS,    BO_IP
+		    <if test="bo_parent!=null and bo_parent gt 0">   
+		    ,  BO_PARENT
+		    </if>
+		) VALUES (
+		    #{bo_no},    #{board_type},    #{bo_title},
+		    #{bo_writer},    SYSDATE,    #{bo_content},
+		    #{bo_pass},    #{bo_ip}    
+		    <if test="bo_parent!=null and bo_parent gt 0"> 
+		    ,  #{bo_parent}
+		    </if>
+		)
+	</insert>
+	<update id="updateBoard" parameterType="Board2VO">
+		UPDATE BOARD2
+		SET
+		    bo_title = #{bo_title},
+		    bo_content = #{bo_content}
+		WHERE
+		    bo_no = #{bo_no}
+	</update>
+	
+	<delete id="deleteBoard" parameterType="Board2VO">
+		DELETE FROM BOARD2
+		WHERE BO_NO = #{bo_no}
+	</delete>
+	<update id="updateBoLike" parameterType="Board2VO">
+		UPDATE BOARD2 
+		SET 
+		BO_LIKE = BO_LIKE+1
+		WHERE BO_NO =  #{bo_no}
+	</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

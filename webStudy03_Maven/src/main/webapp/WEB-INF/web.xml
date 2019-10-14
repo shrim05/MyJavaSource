@@ -59,9 +59,11 @@
     <init-param>
       <param-name>basePackages</param-name>
       <param-value>
-  		kr.or.ddit.member.controller
+		kr.or.ddit.member.controller
   		kr.or.ddit.common.controller
   		kr.or.ddit.prod.controller
+  		kr.or.ddit.alba.controller
+  		kr.or.ddit.board.controller
   		</param-value>
     </init-param>
     <init-param>
