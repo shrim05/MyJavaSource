@@ -8,7 +8,7 @@
 	<packaging>war</packaging>
 	<properties>
 		<java-version>1.8</java-version>
-		<org.apache.log4j-version>2.12.1</org.apache.log4j-version>
+		<org.apache.log4j-version>2.15.0</org.apache.log4j-version>
 	</properties>
 	<build>
 		<plugins>
